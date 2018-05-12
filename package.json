@@ -1,0 +1,24 @@
+{
+  "name": "aa",
+  "version": "1.0.0",
+  "description": "Ace Attorney?",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Objection!\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coalpha/aa.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Coalpha/aa/issues"
+  },
+  "homepage": "https://github.com/Coalpha/aa#readme",
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0"
+  }
+}
