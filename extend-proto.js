@@ -17,6 +17,10 @@ const s = {
   reverse() {
     return this.mince().reverse().join``;
   },
+  prefix(v, l) {
+    const count = l - this.length;
+    return `${v}`.repeat(count > 0 && count).concat(this);
+  },
   every: Array.prototype.every,
   filter: Array.prototype.filter,
   find: Array.prototype.find,
@@ -76,7 +80,7 @@ const o = {
 };
 const n = {
   times(fn) {
-    return Array(+this).fill(0).forEach((v, i) => fn(i));
+    return Array(+this).fill(0).map((v, i) => fn(i));
   },
 };
 const as = {

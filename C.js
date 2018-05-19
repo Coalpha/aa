@@ -3,7 +3,7 @@
 const C = {
   __: ['Placeholder'],
 };
-C.curry = (fn, name) => {
+C.curry = (fn) => {
   // get ready for some spaghetti code
   // the flow of this is kind of complicated because it needs to be
   const argnames = fn.toString().match(/([.\w]+,*\s*)+/)[0].split`,`.map(v => v.replace(/\s/, ''));
@@ -17,7 +17,7 @@ C.curry = (fn, name) => {
       return fn(...args.concat(rest));
     }
     const obj = Object.create(proto);
-    argNamesReceived.forEach((v) => obj[v] = () => console.error(`Already received argument ${v}!`));
+    argNamesReceived.forEach(v => obj[v] = () => console.error(`Already received argument ${v}!`));
     // remove values that already have been given
     obj.args = args;
     obj.rest = rest;
@@ -38,7 +38,7 @@ C.curry = (fn, name) => {
         // it's okay to set rest with "="
         argNamesReceived.push(argname);
         return buildObject(args, a, argNamesReceived);
-      }
+      };
     } else {
       proto[argname] = function argument(a) {
         const args = this.args.slice();
@@ -47,7 +47,7 @@ C.curry = (fn, name) => {
         args[i] = a;
         argNamesReceived.push(argname);
         return buildObject(args, rest, argNamesReceived);
-      }
+      };
     }
   });
   return buildObject();
