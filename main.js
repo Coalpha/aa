@@ -39,11 +39,25 @@ function imageLoader(src) {
   i.src = src;
   return new Promise((res, rej) => {
     i.onload = () => res(i);
-    i.onerror = () => rej(`Loading ${src} failed!`);
+    i.onerror = () => rej(new Error(`Image: loading ${src} failed!`));
   });
-};
-function SpriteLoader(src, count) {
+}
+function spriteLoader(src, count) {
   return Promise.all(count.times(i => imageLoader(`assets/${src}${`${i + 1}`.prefix(0, 4)}.png`)));
+}
+function audioLoader(src) {
+  const e = new Audio();
+  e.src = src;
+  return new Promise((res, rej) => {
+    e.onload = () => res(e);
+    e.onerror = () => rej(new Error(`Audio: loading ${src} failed!`));
+  });
+}
+async function main() {
+  const a = spriteLoader('characters/phoenix/phoenix-ohshit', 14);
+  const b = spriteLoader('characters/phoenix/phoenix-document(b)', 21);
+  const [sprites, sprites2] = await Promise.all([a, b]);
+  sprites.concat(sprites2).map(v => document.body.appendChild(v));
 }
 // Action
 ctx.forEach(v => v.imageSmoothingEnabled = false);
@@ -51,4 +65,3 @@ ctx.forEach(v => v.imageSmoothingEnabled = false);
 canvasSize(adjustedWidth, adjustedHeight);
 const loc = Object.create(null);
 const sound = Object.create(null);
-const pw = SpriteLoader('characters/phoenix/phoenix-document(b)', 21);
