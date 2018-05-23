@@ -1,5 +1,6 @@
 // If you want to read this code, this file is NOT where you want to start.
-// I'm using a few custom "libaries"
+A._annotateFnDefaults.showDescriptors = false;
+// remove annoying descriptors
 const dswidth = 256;
 const dsheight = 192;
 const sizeMultiplier = 2;
@@ -13,7 +14,7 @@ const canven = {
   foreground: document.getElementById('foreground'),
   fiveground: document.getElementById('fiveground'),
 };
-const ctx = canven.map(_.getContext`2d`);
+const ctx = canven.map(A._.getContext`2d`);
 let currentFillStyle = '#000000';
 const setFillStyle = (context, color) => {
   if (color !== currentFillStyle) {
@@ -33,31 +34,54 @@ const canvasSize = (width, height) => {
     v.style.height = py;
   });
 };
-// Loaders
-function imageLoader(src) {
+// loaders
+const load = {};
+load.image = (src) => {
+  console.log(`Loading image @ ${src}`);
   const i = new Image();
-  i.src = src;
   return new Promise((res, rej) => {
-    i.onload = () => res(i);
-    i.onerror = () => rej(new Error(`Image: loading ${src} failed!`));
+    i.onload = () => {
+      console.log(`Loaded image @ ${src}!`);
+      res(i);
+    };
+    i.onerror = () => { throw new Error(`Loading ${src} failed!`); };
+    i.src = src;
   });
-}
-function spriteLoader(src, count) {
-  return Promise.all(count.times(i => imageLoader(`assets/${src}${`${i + 1}`.prefix(0, 4)}.png`)));
-}
-function audioLoader(src) {
-  const e = new Audio();
-  e.src = src;
+};
+load.audio = (src) => {
+  console.log(`Loading audio @ ${src}`);
+  const a = new Audio();
   return new Promise((res, rej) => {
-    e.onload = () => res(e);
-    e.onerror = () => rej(new Error(`Audio: loading ${src} failed!`));
+    a.onloadeddata = () => {
+      console.log(`Loaded audio @ ${src}!`);
+      res(a);
+    };
+    a.onerror = () => { throw new Error(`Loading ${src} failed!`); };
+    a.src = src;
+    audioContainer.appendChild(a);
   });
+};
+load.sprite = A.curry((src, count) => Promise.all(count.times(i => load.image(`assets/${src}${`${i + 1}`.prefix(0, 4)}.png`))), 'load.sprite');
+load.music = A.pipe(A.add('assets/music/'), load.audio);
+load.sfx = src => load.audio(`assets/sfx/${src}.wav`);
+load.blip = gender => load.sfx(`sfx-blip${gender}`);
+// collections
+async function chara(name, sprites, gender) {
+  console.log('loading');
+  const obj = {
+    name,
+  };
+  console.log(obj);
+  const spritePromises = sprites.map((count, src) => load.sprite(`characters/${name}/${src}`, count));
+  [obj.sprites, obj.blip] = await Promise.all([spritePromises, load.blip((gender))]);
+  return obj;
 }
 async function main() {
-  const a = spriteLoader('characters/phoenix/phoenix-ohshit', 14);
-  const b = spriteLoader('characters/phoenix/phoenix-document(b)', 21);
-  const [sprites, sprites2] = await Promise.all([a, b]);
-  sprites.concat(sprites2).map(v => document.body.appendChild(v));
+  const phoenix = await chara('phoenix', {
+    'phoenix-ohshit': 14,
+    'phoenix-document(b)': 21,
+  }, 'male');
+  console.log(phoenix);
 }
 // Action
 ctx.forEach(v => v.imageSmoothingEnabled = false);
