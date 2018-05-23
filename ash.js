@@ -244,7 +244,7 @@ A.flip = (fn) => {
   };
   return A._curryN(n, (...a) => fn(a[1], a[0], a.slice(2)), name, nargnames, o);
 };
-
+A.wrapFn = A._curryN(2, (fn, args) => () => fn(...args), 'wrapFn');
 // Helper functions
 A.add = A.curry((a, b) => a + b, 'add', ['int', 'int']);
 A.subtract = A.curry((a, b) => a - b, 'subtract', ['int', 'int']);
@@ -336,6 +336,9 @@ A._Object = {
   count(fn) {
     return this.filter(fn).length;
   },
+  pairs() {
+    return
+  },
 };
 A._Number = {
   times(fn) {
@@ -361,4 +364,4 @@ Object.keys(A._ArrayLike).forEach(key => Object.defineProperty(Array.prototype, 
 Object.keys(A._String).forEach(key => Object.defineProperty(String.prototype, key, { value: A._String[key] }));
 Object.keys(A._Array).forEach(key => Object.defineProperty(Array.prototype, key, { value: A._Array[key] }));
 Object.keys(A._Number).forEach(key => Object.defineProperty(Number.prototype, key, { value: A._Number[key] }));
-Object.keys(A._Object).forEach(key => Object.defineProperty(Object.prototype, key, { value: A._String[key] }));
+Object.keys(A._Object).forEach(key => Object.defineProperty(Object.prototype, key, { value: A._Object[key] }));
